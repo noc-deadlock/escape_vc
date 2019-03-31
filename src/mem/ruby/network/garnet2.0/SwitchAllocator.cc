@@ -283,6 +283,10 @@ SwitchAllocator::arbitrate_outports()
 bool
 SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
 {
+    PortDirection inport_dirn  = m_input_unit[inport]->get_direction();
+    PortDirection outport_dirn = m_output_unit[outport]->get_direction();
+    RouteInfo route = m_input_unit[inport]->peekTopFlit(invc)->get_route();
+
     // Check if outvc needed
     // Check if credit needed (for multi-flit packet)
     // Check if ordering violated (in ordered vnet)
@@ -296,7 +300,8 @@ SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
         // needs outvc
         // this is only true for HEAD and HEAD_TAIL flits.
 
-        if (m_output_unit[outport]->has_free_vc(vnet)) {
+        if (m_output_unit[outport]->has_free_vc(vnet, invc,
+                                    inport_dirn, outport_dirn, route)) {
 
             has_outvc = true;
 
@@ -338,11 +343,23 @@ SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
 }
 
 // Assign a free VC to the winner of the output port.
+// Check here if the destination wrt current router lies
+// in the II or III quandrant then don't allocate the
+// 'escape vc', which is base
 int
 SwitchAllocator::vc_allocate(int outport, int inport, int invc)
 {
+    // ICN Lab 3:
+    // Hint: invc, route, inport_dirn, outport_dirn are provided
+    // to implement escape VC
+    PortDirection inport_dirn  = m_input_unit[inport]->get_direction();
+    PortDirection outport_dirn = m_output_unit[outport]->get_direction();
+    RouteInfo route = m_input_unit[inport]->peekTopFlit(invc)->get_route();
+
     // Select a free VC from the output port
-    int outvc = m_output_unit[outport]->select_free_vc(get_vnet(invc));
+    int vnet = get_vnet(invc);
+    int outvc = m_output_unit[outport]->select_free_vc(vnet, invc,
+                                        inport_dirn, outport_dirn, route);
 
     // has to get a valid VC since it checked before performing SA
     assert(outvc != -1);

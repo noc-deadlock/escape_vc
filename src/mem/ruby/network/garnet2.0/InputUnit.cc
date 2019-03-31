@@ -88,7 +88,7 @@ InputUnit::wakeup()
     if (m_in_link->isReady(m_router->curCycle())) {
 
         t_flit = m_in_link->consumeLink();
-        int vc = t_flit->get_vc();
+        int vc = t_flit->get_vc(); // we get 'vc' from here
         t_flit->increment_hops(); // for stats
 
         if ((t_flit->get_type() == HEAD_) ||
@@ -99,13 +99,12 @@ InputUnit::wakeup()
 
             // Route computation for this vc
             int outport = m_router->route_compute(t_flit->get_route(),
-                m_id, m_direction);
+                vc, m_id, m_direction);
 
             // Update output port in VC
             // All flits in this packet will use this output port
             // The output port field in the flit is updated after it wins SA
             grant_outport(vc, outport);
-
         } else {
             assert(m_vcs[vc]->get_state() == ACTIVE_);
         }

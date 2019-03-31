@@ -31,8 +31,8 @@
  */
 
 
-#ifndef __MEM_RUBY_NETWORK_GARNET2_0_COMMONTYPES_HH__
-#define __MEM_RUBY_NETWORK_GARNET2_0_COMMONTYPES_HH__
+#ifndef __MEM_RUBY_NETWORK_GARNET_COMMONTYPES_HH__
+#define __MEM_RUBY_NETWORK_GARNET_COMMONTYPES_HH__
 
 #include "mem/ruby/common/NetDest.hh"
 
@@ -43,7 +43,8 @@ enum VC_state_type {IDLE_, VC_AB_, ACTIVE_, NUM_VC_STATE_TYPE_};
 enum VNET_type {CTRL_VNET_, DATA_VNET_, NULL_VNET_, NUM_VNET_TYPE_};
 enum flit_stage {I_, VA_, SA_, ST_, LT_, NUM_FLIT_STAGE_};
 enum link_type { EXT_IN_, EXT_OUT_, INT_, NUM_LINK_TYPES_ };
-enum RoutingAlgorithm { TABLE_ = 0, XY_ = 1, CUSTOM_ = 2,
+enum RoutingAlgorithm { TABLE_ = 0, XY_ = 1, TURN_MODEL_ = 2, RANDOM_ = 3,
+                        ADAPT_WF_=4, ESCAPE_VC_ = 5 ,CUSTOM_ = 6,
                         NUM_ROUTING_ALGORITHM_};
 
 struct RouteInfo
@@ -62,4 +63,4 @@ struct RouteInfo
 
 #define INFINITE_ 10000
 
-#endif //__MEM_RUBY_NETWORK_GARNET2_0_COMMONTYPES_HH__
+#endif // __MEM_RUBY_NETWORK_GARNET_COMMONTYPES_HH__

@@ -43,8 +43,6 @@ Research Starter Kit on System Modeling. More information can be found
 at: http://www.arm.com/ResearchEnablement/SystemModeling
 """
 
-from __future__ import print_function
-
 import os
 import m5
 from m5.util import addToPath
@@ -147,7 +145,7 @@ def get_processes(cmd):
 
         process = Process(pid=100 + idx, cwd=cwd, cmd=argv, executable=argv[0])
 
-        print("info: %d. command and arguments: %s" % (idx + 1, process.cmd))
+        print "info: %d. command and arguments: %s" % (idx + 1, process.cmd)
         multiprocesses.append(process)
 
     return multiprocesses
@@ -170,8 +168,8 @@ def create(args):
     # that we can pass to gem5.
     processes = get_processes(args.commands_to_run)
     if len(processes) != args.num_cores:
-        print("Error: Cannot map %d command(s) onto %d CPU(s)" %
-              (len(processes), args.num_cores))
+        print "Error: Cannot map %d command(s) onto %d " \
+            "CPU(s)" % (len(processes), args.num_cores)
         sys.exit(1)
 
     # Assign one workload to each CPU
@@ -227,7 +225,7 @@ def main():
     # Print the reason for the simulation exit. Some exit codes are
     # requests for service (e.g., checkpoints) from the simulation
     # script. We'll just ignore them here and exit.
-    print(event.getCause(), " @ ", m5.curTick())
+    print event.getCause(), " @ ", m5.curTick()
     sys.exit(event.getCode())
 
 

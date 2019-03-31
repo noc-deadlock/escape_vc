@@ -92,8 +92,6 @@ OutputUnit::has_credit(int out_vc)
     return m_outvc_state[out_vc]->has_credit();
 }
 
-
-// Check if the output port (i.e., input port at next router) has free VCs.
 bool
 OutputUnit::has_free_vc(int vnet)
 {
@@ -106,17 +104,134 @@ OutputUnit::has_free_vc(int vnet)
     return false;
 }
 
-// Assign a free output VC to the winner of Switch Allocation
-int
-OutputUnit::select_free_vc(int vnet)
+// Check if the output port (i.e., input port at next router) has free VCs.
+bool
+OutputUnit::has_free_vc(int vnet, int invc,
+         PortDirection inport_dirn, PortDirection outport_dirn, RouteInfo route)
 {
+    // ICN Lab 3:
+    // Hint: invc, route, inport_dirn, outport_dirn are provided
+    // to implement escape VC
+
     int vc_base = vnet*m_vc_per_vnet;
-    for (int vc = vc_base; vc < vc_base + m_vc_per_vnet; vc++) {
-        if (is_vc_idle(vc, m_router->curCycle())) {
-            m_outvc_state[vc]->setState(ACTIVE_, m_router->curCycle());
-            return vc;
+    int num_cols = m_router->get_net_ptr()->getNumCols();
+
+    int my_id = m_router->get_id();
+    int my_x = my_id % num_cols;
+    int my_y = my_id / num_cols;
+
+    int dest_id = route.dest_router;
+    int dest_x = dest_id % num_cols;
+    int dest_y = dest_id / num_cols;
+
+    bool x_dirn = (dest_x >= my_x);
+    // bool y_dirn = (dest_y >= my_y);
+
+    if ((RoutingAlgorithm)m_router->get_net_ptr()->getRoutingAlgorithm() \
+         == ESCAPE_VC_) {
+        if (!x_dirn && (dest_y > my_y) && (outport_dirn == "North")) {
+            // printf("Should not use escape VC!! \n");
+
+            for (int vc = vc_base+1; vc < vc_base + m_vc_per_vnet; vc++) {
+                if (is_vc_idle(vc, m_router->curCycle()))
+                    return true;
+            }
+
+        }
+        else if (!x_dirn && (dest_y < my_y) && (outport_dirn == "South")) {
+            // printf("Should not use escape VC!! \n");
+
+            for (int vc = vc_base+1; vc < vc_base + m_vc_per_vnet; vc++) {
+                if (is_vc_idle(vc, m_router->curCycle()))
+                    return true;
+            }
+
+        } else {
+            for (int vc = vc_base; vc < vc_base + m_vc_per_vnet; vc++) {
+                if (is_vc_idle(vc, m_router->curCycle()))
+                    return true;
+            }
         }
     }
+    else {
+        for (int vc = vc_base; vc < vc_base + m_vc_per_vnet; vc++) {
+            if (is_vc_idle(vc, m_router->curCycle()))
+                return true;
+        }
+    }
+
+    return false;
+}
+
+// Assign a free output VC to the winner of Switch Allocation
+int
+OutputUnit::select_free_vc(int vnet, int invc,
+         PortDirection inport_dirn, PortDirection outport_dirn, RouteInfo route)
+{
+    // ICN Lab 3:
+    // Hint: invc, route, inport_dirn, outport_dirn are provided
+    // to implement escape VC
+
+    int vc_base = vnet*m_vc_per_vnet;
+    // 'vc_base' is my escape vc
+    // if destination is in II or III quad wrt my router and
+    // direction id N or S repectively (get it from the flit)
+    // then loop through vc_base+1 to 'vc_base+ m_vc_per_vnet'
+    // else loop as usual...
+    int num_cols = m_router->get_net_ptr()->getNumCols();
+
+    int my_id = m_router->get_id();
+    int my_x = my_id % num_cols;
+    int my_y = my_id / num_cols;
+
+    int dest_id = route.dest_router;
+    int dest_x = dest_id % num_cols;
+    int dest_y = dest_id / num_cols;
+
+    bool x_dirn = (dest_x >= my_x);
+    // bool y_dirn = (dest_y >= my_y);
+
+    if ((RoutingAlgorithm)m_router->get_net_ptr()->getRoutingAlgorithm() \
+         == ESCAPE_VC_) {
+        if (!x_dirn && (dest_y > my_y) && (outport_dirn == "North")) {
+            // printf("Should not use escape VC!! \n");
+
+            for (int vc = vc_base+1; vc < vc_base + m_vc_per_vnet; vc++) {
+                if (is_vc_idle(vc, m_router->curCycle())) {
+                    m_outvc_state[vc]->setState(ACTIVE_, m_router->curCycle());
+                    return vc;
+                }
+            }
+
+        }
+        else if (!x_dirn && (dest_y < my_y) && (outport_dirn == "South")) {
+            // printf("Should not use escape VC!! \n");
+
+            for (int vc = vc_base+1; vc < vc_base + m_vc_per_vnet; vc++) {
+                if (is_vc_idle(vc, m_router->curCycle())) {
+                    m_outvc_state[vc]->setState(ACTIVE_, m_router->curCycle());
+                    return vc;
+                }
+            }
+
+        } else {
+
+            for (int vc = vc_base; vc < vc_base + m_vc_per_vnet; vc++) {
+                if (is_vc_idle(vc, m_router->curCycle())) {
+                    m_outvc_state[vc]->setState(ACTIVE_, m_router->curCycle());
+                    return vc;
+                }
+            }
+        }
+     }
+     else {
+         for (int vc = vc_base; vc < vc_base + m_vc_per_vnet; vc++) {
+             if (is_vc_idle(vc, m_router->curCycle())) {
+                 m_outvc_state[vc]->setState(ACTIVE_, m_router->curCycle());
+                 return vc;
+             }
+         }
+     }
 
     return -1;
 }

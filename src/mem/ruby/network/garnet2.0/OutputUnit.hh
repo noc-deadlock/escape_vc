@@ -31,8 +31,8 @@
  */
 
 
-#ifndef __MEM_RUBY_NETWORK_GARNET2_0_OUTPUTUNIT_HH__
-#define __MEM_RUBY_NETWORK_GARNET2_0_OUTPUTUNIT_HH__
+#ifndef __MEM_RUBY_NETWORK_GARNET_OUTPUT_UNIT_HH__
+#define __MEM_RUBY_NETWORK_GARNET_OUTPUT_UNIT_HH__
 
 #include <iostream>
 #include <vector>
@@ -59,7 +59,10 @@ class OutputUnit : public Consumer
     void increment_credit(int out_vc);
     bool has_credit(int out_vc);
     bool has_free_vc(int vnet);
-    int select_free_vc(int vnet);
+    bool has_free_vc(int vnet, int invc,
+         PortDirection inport_dirn, PortDirection outport_dirn, RouteInfo route);
+    int select_free_vc(int vnet, int invc,
+         PortDirection inport_dirn, PortDirection outport_dirn, RouteInfo route);
 
     inline PortDirection get_direction() { return m_direction; }
 
@@ -110,4 +113,4 @@ class OutputUnit : public Consumer
 
 };
 
-#endif // __MEM_RUBY_NETWORK_GARNET2_0_OUTPUTUNIT_HH__
+#endif // __MEM_RUBY_NETWORK_GARNET_OUTPUT_UNIT_HH__

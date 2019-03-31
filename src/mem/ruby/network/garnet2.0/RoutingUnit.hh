@@ -31,8 +31,8 @@
  */
 
 
-#ifndef __MEM_RUBY_NETWORK_GARNET2_0_ROUTINGUNIT_HH__
-#define __MEM_RUBY_NETWORK_GARNET2_0_ROUTINGUNIT_HH__
+#ifndef __MEM_RUBY_NETWORK_GARNET_ROUTING_UNIT_HH__
+#define __MEM_RUBY_NETWORK_GARNET_ROUTING_UNIT_HH__
 
 #include "mem/ruby/common/Consumer.hh"
 #include "mem/ruby/common/NetDest.hh"
@@ -48,6 +48,7 @@ class RoutingUnit
   public:
     RoutingUnit(Router *router);
     int outportCompute(RouteInfo route,
+                      int vc,
                       int inport,
                       PortDirection inport_dirn);
 
@@ -67,6 +68,16 @@ class RoutingUnit
                          int inport,
                          PortDirection inport_dirn);
 
+    int outportComputeTurnModel(RouteInfo route,
+                         int inport,
+                         PortDirection inport_dirn);
+
+    int outportComputeRandom(RouteInfo route,
+                         int inport,
+                         PortDirection inport_dirn);
+    int outportComputeAdaptWF(RouteInfo route,
+                            int inport,
+                            PortDirection inport_dirn);
     // Custom Routing Algorithm using Port Directions
     int outportComputeCustom(RouteInfo route,
                              int inport,
@@ -74,6 +85,9 @@ class RoutingUnit
 
   private:
     Router *m_router;
+
+    int m_num_vcs;
+    int m_vcs_per_vnet;
 
     // Routing Table
     std::vector<NetDest> m_routing_table;
@@ -86,4 +100,4 @@ class RoutingUnit
     std::map<PortDirection, int> m_outports_dirn2idx;
 };
 
-#endif // __MEM_RUBY_NETWORK_GARNET2_0_ROUTINGUNIT_HH__
+#endif // __MEM_RUBY_NETWORK_GARNET_ROUTING_UNIT_HH__

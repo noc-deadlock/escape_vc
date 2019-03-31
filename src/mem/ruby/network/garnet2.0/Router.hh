@@ -31,8 +31,8 @@
  */
 
 
-#ifndef __MEM_RUBY_NETWORK_GARNET2_0_ROUTER_HH__
-#define __MEM_RUBY_NETWORK_GARNET2_0_ROUTER_HH__
+#ifndef __MEM_RUBY_NETWORK_GARNET_ROUTER_HH__
+#define __MEM_RUBY_NETWORK_GARNET_ROUTER_HH__
 
 #include <iostream>
 #include <vector>
@@ -79,6 +79,7 @@ class Router : public BasicRouter, public Consumer
     int get_num_inports()   { return m_input_unit.size(); }
     int get_num_outports()  { return m_output_unit.size(); }
     int get_id()            { return m_id; }
+    bool has_free_vc(int outport, int vnet);
 
     void init_net_ptr(GarnetNetwork* net_ptr)
     {
@@ -91,7 +92,7 @@ class Router : public BasicRouter, public Consumer
     PortDirection getOutportDirection(int outport);
     PortDirection getInportDirection(int inport);
 
-    int route_compute(RouteInfo route, int inport, PortDirection direction);
+    int route_compute(RouteInfo route, int vc, int inport, PortDirection direction);
     void grant_switch(int inport, flit *t_flit);
     void schedule_wakeup(Cycles time);
 
@@ -137,4 +138,4 @@ class Router : public BasicRouter, public Consumer
     Stats::Scalar m_crossbar_activity;
 };
 
-#endif // __MEM_RUBY_NETWORK_GARNET2_0_ROUTER_HH__
+#endif // __MEM_RUBY_NETWORK_GARNET_ROUTER_HH__

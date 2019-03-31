@@ -45,8 +45,6 @@
 # between system construction and run control may allow better
 # debugging.
 
-from __future__ import print_function
-
 import argparse
 import ConfigParser
 import inspect
@@ -542,4 +540,5 @@ mgr.find_all_objects()
 m5.instantiate(args.checkpoint_dir)
 
 exit_event = m5.simulate()
-print('Exiting @ tick %i because %s' % (m5.curTick(), exit_event.getCause()))
+print 'Exiting @ tick %i because %s' % (
+    m5.curTick(), exit_event.getCause())

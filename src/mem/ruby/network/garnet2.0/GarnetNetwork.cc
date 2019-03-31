@@ -251,6 +251,7 @@ GarnetNetwork::get_router_id(int ni)
     return m_nis[ni]->get_router_id();
 }
 
+
 void
 GarnetNetwork::regStats()
 {

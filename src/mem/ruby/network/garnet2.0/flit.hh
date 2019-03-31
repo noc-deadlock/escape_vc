@@ -31,8 +31,8 @@
  */
 
 
-#ifndef __MEM_RUBY_NETWORK_GARNET2_0_FLIT_HH__
-#define __MEM_RUBY_NETWORK_GARNET2_0_FLIT_HH__
+#ifndef __MEM_RUBY_NETWORK_GARNET_FLIT_HH__
+#define __MEM_RUBY_NETWORK_GARNET_FLIT_HH__
 
 #include <cassert>
 #include <iostream>
@@ -40,6 +40,7 @@
 #include "base/types.hh"
 #include "mem/ruby/network/garnet2.0/CommonTypes.hh"
 #include "mem/ruby/slicc_interface/Message.hh"
+
 
 class flit
 {
@@ -121,4 +122,4 @@ operator<<(std::ostream& out, const flit& obj)
     return out;
 }
 
-#endif // __MEM_RUBY_NETWORK_GARNET2_0_FLIT_HH__
+#endif // __MEM_RUBY_NETWORK_GARNET_FLIT_HH__
