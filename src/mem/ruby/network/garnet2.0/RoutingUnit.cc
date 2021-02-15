@@ -163,12 +163,17 @@ RoutingUnit::outportCompute(RouteInfo route, int vc, int inport,
     // override here based on the vc.
     // this override the choice of routing algorithm as well
     int vc_base = route.vnet*m_vcs_per_vnet;
-    if (routing_algorithm == ESCAPE_VC_) {
+    if (routing_algorithm == ESCAPE_VC_RANDOM_) {
         if (vc == vc_base)
             routing_algorithm = ADAPT_WF_;
         else
-            routing_algorithm = RANDOM_; // this need to changed to RAND_/ADAPT_RAND
-    }
+            routing_algorithm = RANDOM_;
+    } else if (routing_algorithm == ESCAPE_VC_ADAPT_RANDOM_) {
+        if (vc == vc_base)
+            routing_algorithm = ADAPT_WF_;
+        else
+            routing_algorithm = ADAPT_RANDOM_;
+    } 
 
     switch (routing_algorithm) {
         case TABLE_:  outport =
@@ -177,6 +182,8 @@ RoutingUnit::outportCompute(RouteInfo route, int vc, int inport,
             outportComputeXY(route, inport, inport_dirn); break;
         case TURN_MODEL_: outport =
             outportComputeTurnModel(route, inport, inport_dirn); break;
+        case ADAPT_RANDOM_: outport =
+            outportComputeAdaptRandom(route, inport, inport_dirn); break;
         case RANDOM_: outport =
             outportComputeRandom(route, inport, inport_dirn); break;
         case ADAPT_WF_: outport =
@@ -423,6 +430,156 @@ RoutingUnit::outportComputeAdaptWF(RouteInfo route,
 
 
 }
+
+
+int
+RoutingUnit::outportComputeAdaptRandom(RouteInfo route,
+                        int inport,
+                        PortDirection inport_dirn)
+{
+    PortDirection outport_dirn = "Unknown";
+
+    int M5_VAR_USED num_rows = m_router->get_net_ptr()->getNumRows();
+    int num_cols = m_router->get_net_ptr()->getNumCols();
+    assert(num_rows > 0 && num_cols > 0);
+
+    int my_id = m_router->get_id();
+    int my_x = my_id % num_cols;
+    int my_y = my_id / num_cols;
+
+    int dest_id = route.dest_router;
+    int dest_x = dest_id % num_cols;
+    int dest_y = dest_id / num_cols;
+
+    int x_hops = abs(dest_x - my_x);
+    int y_hops = abs(dest_y - my_y);
+
+    bool x_dirn = (dest_x >= my_x);
+    bool y_dirn = (dest_y >= my_y);
+
+    // already checked that in outportCompute() function
+    assert(!(x_hops == 0 && y_hops == 0));
+
+    /////////////////////////////////////////
+    // ICN Lab 3: Insert code here
+    if (x_hops == 0)
+    {
+        if (y_dirn > 0)
+            outport_dirn = "North";
+        else
+            outport_dirn = "South";
+    }
+    else if (y_hops == 0)
+    {
+        if (x_dirn > 0)
+            outport_dirn = "East";
+        else
+            outport_dirn = "West";
+    } else {
+        int rand = random() % 2;
+
+        // instead of choosing randomly
+        // choose the direction which has more
+        // credits present in the outVCState.
+        if (x_dirn && y_dirn) {
+            // Quadrant I
+            int credit_est = 0;
+            for (int vc_ = 0; vc_ < m_vcs_per_vnet; vc_++) {
+             credit_est += m_router->\
+                get_outputUnit_ref()[m_outports_dirn2idx["East"]]->get_credit_count(vc_);
+
+            }
+            // cout << "credit_est: " << credit_est << endl;
+            int credit_nrth = 0;
+            for (int vc_ = 0; vc_ < m_vcs_per_vnet; vc_++) {
+             credit_nrth += m_router->\
+                get_outputUnit_ref()[m_outports_dirn2idx["North"]]->get_credit_count(vc_);
+
+            }
+            // cout << "credit_nrth: " << credit_nrth << endl;
+            if (credit_est > credit_nrth)
+                outport_dirn = "East";
+            else if (credit_nrth > credit_est)
+                outport_dirn = "North";
+            else
+                outport_dirn = rand ? "East" : "North";
+        }
+        else if (!x_dirn && y_dirn) {
+            // Quadrant II
+            int credit_wst = 0;
+            for (int vc_ = 0; vc_ < m_vcs_per_vnet; vc_++) {
+             credit_wst += m_router->\
+                get_outputUnit_ref()[m_outports_dirn2idx["West"]]->get_credit_count(vc_);
+
+            }
+            // cout << "credit_wst: " << credit_wst << endl;
+            int credit_nrth = 0;
+            for (int vc_ = 0; vc_ < m_vcs_per_vnet; vc_++) {
+             credit_nrth += m_router->\
+                get_outputUnit_ref()[m_outports_dirn2idx["North"]]->get_credit_count(vc_);
+
+            }
+            // cout << "credit_nrth: " << credit_nrth << endl;
+            if (credit_wst > credit_nrth)
+                outport_dirn = "West";
+            else if (credit_nrth > credit_wst)
+                outport_dirn = "North";
+            else
+                outport_dirn = rand ? "West" : "North";
+        }
+        else if (!x_dirn && !y_dirn) {
+            // Quadrant III
+            int credit_wst = 0;
+            for (int vc_ = 0; vc_ < m_vcs_per_vnet; vc_++) {
+             credit_wst += m_router->\
+                get_outputUnit_ref()[m_outports_dirn2idx["West"]]->get_credit_count(vc_);
+
+            }
+            // cout << "credit_wst: " << credit_wst << endl;
+            int credit_south = 0;
+            for (int vc_ = 0; vc_ < m_vcs_per_vnet; vc_++) {
+             credit_south += m_router->\
+                get_outputUnit_ref()[m_outports_dirn2idx["South"]]->get_credit_count(vc_);
+
+            }
+            // cout << "credit_south: " << credit_south << endl;
+            if (credit_wst > credit_south)
+                outport_dirn = "West";
+            else if (credit_south > credit_wst)
+                outport_dirn = "South";
+            else
+                outport_dirn = rand ? "West" : "South";
+        }
+        else {
+            // Quadrant IV
+            int credit_est = 0;
+            for (int vc_ = 0; vc_ < m_vcs_per_vnet; vc_++) {
+             credit_est += m_router->\
+                get_outputUnit_ref()[m_outports_dirn2idx["East"]]->get_credit_count(vc_);
+
+            }
+            // cout << "credit_est: " << credit_est << endl;
+            int credit_south = 0;
+            for (int vc_ = 0; vc_ < m_vcs_per_vnet; vc_++) {
+             credit_south += m_router->\
+                get_outputUnit_ref()[m_outports_dirn2idx["North"]]->get_credit_count(vc_);
+
+            }
+            // cout << "credit_south: " << credit_south << endl;
+            if (credit_est > credit_south)
+                outport_dirn = "East";
+            else if (credit_south > credit_est)
+                outport_dirn = "South";
+            else
+                outport_dirn = rand ? "East" : "South";
+        }
+    }
+
+    return m_outports_dirn2idx[outport_dirn];
+
+
+}
+
 
 
 int

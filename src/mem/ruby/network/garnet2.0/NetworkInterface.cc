@@ -154,11 +154,11 @@ NetworkInterface::incrementStats(flit *t_flit)
 
     // Decrement the additional cycle counted at src NIC
     // when flit is enqueued.
-//    network_delay = network_delay - Cycles(1);
+    network_delay = network_delay - Cycles(1);
 
     // Decrement default 2 cycles of queueing delay in every message
     // from protocol
-//    queueing_delay = queueing_delay - Cycles(2);
+    queueing_delay = queueing_delay - Cycles(2);
 
     m_net_ptr->increment_flit_network_latency(network_delay, vnet);
     m_net_ptr->increment_flit_queueing_latency(queueing_delay, vnet);

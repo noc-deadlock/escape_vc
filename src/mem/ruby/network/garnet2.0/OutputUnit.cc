@@ -127,8 +127,10 @@ OutputUnit::has_free_vc(int vnet, int invc,
     bool x_dirn = (dest_x >= my_x);
     // bool y_dirn = (dest_y >= my_y);
 
-    if ((RoutingAlgorithm)m_router->get_net_ptr()->getRoutingAlgorithm() \
-         == ESCAPE_VC_) {
+    if (((RoutingAlgorithm)m_router->get_net_ptr()->getRoutingAlgorithm() \
+         == ESCAPE_VC_RANDOM_) || \
+        ((RoutingAlgorithm)m_router->get_net_ptr()->getRoutingAlgorithm() \
+         == ESCAPE_VC_ADAPT_RANDOM_)) {
         if (!x_dirn && (dest_y > my_y) && (outport_dirn == "North")) {
             // printf("Should not use escape VC!! \n");
 
@@ -191,8 +193,10 @@ OutputUnit::select_free_vc(int vnet, int invc,
     bool x_dirn = (dest_x >= my_x);
     // bool y_dirn = (dest_y >= my_y);
 
-    if ((RoutingAlgorithm)m_router->get_net_ptr()->getRoutingAlgorithm() \
-         == ESCAPE_VC_) {
+    if (((RoutingAlgorithm)m_router->get_net_ptr()->getRoutingAlgorithm() \
+         == ESCAPE_VC_RANDOM_) || \
+        ((RoutingAlgorithm)m_router->get_net_ptr()->getRoutingAlgorithm() \
+         == ESCAPE_VC_ADAPT_RANDOM_)) {
         if (!x_dirn && (dest_y > my_y) && (outport_dirn == "North")) {
             // printf("Should not use escape VC!! \n");
 

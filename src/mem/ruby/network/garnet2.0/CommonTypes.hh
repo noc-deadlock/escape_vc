@@ -44,7 +44,9 @@ enum VNET_type {CTRL_VNET_, DATA_VNET_, NULL_VNET_, NUM_VNET_TYPE_};
 enum flit_stage {I_, VA_, SA_, ST_, LT_, NUM_FLIT_STAGE_};
 enum link_type { EXT_IN_, EXT_OUT_, INT_, NUM_LINK_TYPES_ };
 enum RoutingAlgorithm { TABLE_ = 0, XY_ = 1, TURN_MODEL_ = 2, RANDOM_ = 3,
-                        ADAPT_WF_=4, ESCAPE_VC_ = 5 ,CUSTOM_ = 6,
+                        ADAPT_RANDOM_ = 4,
+                        ADAPT_WF_=5, ESCAPE_VC_RANDOM_ = 6,
+                        ESCAPE_VC_ADAPT_RANDOM_ = 7, CUSTOM_ = 8,
                         NUM_ROUTING_ALGORITHM_};
 
 struct RouteInfo
