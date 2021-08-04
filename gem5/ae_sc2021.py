@@ -7,11 +7,11 @@ binary = 'build/Garnet_standalone/gem5.opt'
 os.system("scons -j15 {}".format(binary))
 
 
-# bench_caps=[ "BIT_ROTATION", "SHUFFLE", "TRANSPOSE" ]
-# bench=[ "bit_rotation", "shuffle", "transpose" ]
+bench_caps=[ "BIT_ROTATION", "SHUFFLE", "TRANSPOSE" ]
+bench=[ "bit_rotation", "shuffle", "transpose" ]
 
-bench_caps=[ "BIT_ROTATION" ]
-bench=[ "bit_rotation" ]
+# bench_caps=[ "BIT_ROTATION" ]
+# bench=[ "bit_rotation" ]
 
 routing_algorithm=[ 'TABLE', 'XY', 'WestFirst', 'RANDOM', 'ADAPT_RAND', 'ADAPT_WF', 'ESCAPE_VC' ]
 
