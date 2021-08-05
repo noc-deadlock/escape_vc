@@ -13,6 +13,9 @@ at downstream router whenever possible
    * https://mayank-parasar.github.io/website/papers/brownianbubble_nocs2018.pdf
    * https://mayank-parasar.github.io/website/papers/swapnoc_nocarc2017.pdf
 
+### How to build ###
+Under gem5/
+* scons -j15 scons/Garnet_standalone/gem5.opt
 
 ### How to run ###
 
