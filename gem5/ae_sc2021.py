@@ -36,7 +36,7 @@ for c in range(len(num_cores)):
 			injection_rate = 0.02
 			while (pkt_lat < 200.00):
 				############ gem5 command-line ###########
-				os.system("{0:s} -d {1:s}/{2:d}/{3:s}/{4:s}/vc-{5:d}/inj-{6:1.2f} configs/example/garnet_synth_traffic.py --topology=Mesh_XY --num-cpus={2:d} --num-dirs={2:d} --mesh-row={7:d} --inj-vnet={8:d} --network=garnet2.0 --router-latency=1 --sim-cycles={9:d} --injectionrate={6:1.2f} --synthetic={10:s} --routing-algorithm={11:d} ".format(binary, out_dir, num_cores[c], bench_caps[b], routing_algorithm[rout_], vc_, injection_rate, num_rows[c], vnet, cycles, bench[b], rout_))
+				os.system("{0:s} -d {1:s}/{2:d}/{3:s}/{4:s}/vc-{5:d}/inj-{6:1.2f} configs/example/garnet_synth_traffic.py --topology=Mesh_XY --num-cpus={2:d} --num-dirs={2:d} --mesh-row={7:d} --vcs-per-vnet={5:d} --inj-vnet={8:d} --network=garnet2.0 --router-latency=1 --sim-cycles={9:d} --injectionrate={6:1.2f} --synthetic={10:s} --routing-algorithm={11:d} ".format(binary, out_dir, num_cores[c], bench_caps[b], routing_algorithm[rout_], vc_, injection_rate, num_rows[c], vnet, cycles, bench[b], rout_))
 
 				#### convert flot to string with required precision ####
 				inj_rate="{:1.2f}".format(injection_rate)
